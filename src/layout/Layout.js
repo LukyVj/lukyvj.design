@@ -36,11 +36,15 @@ const Layout = ({ children }) => {
         <Header siteTitle={data.site.siteMetadata.title} size={HFSize} />
 
         <main
-          className={`mt-${HFSize} w-100p bdrw-2 bdlw-2 bdls-solid bdrs-solid bdc-black`}
+          className={`mt-50 md:mt-${HFSize} w-100p bdrw-2 bdlw-2 bdls-solid bdrs-solid bdc-black`}
           css={css`
-            height: calc(100vh - ${HFSize * 2}px);
             background: white
               url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAHklEQVQYV2NkYGAwZmBgOMsAAcaMMAaUPotVAEULAIpFBGuHZPV9AAAAAElFTkSuQmCC);
+            height: calc(100vh - 50px);
+
+            @media (min-width: 960px) {
+              height: calc(100vh - ${HFSize * 2}px);
+            }
           `}
         >
           {children}

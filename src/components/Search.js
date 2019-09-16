@@ -224,7 +224,7 @@ class CustomSearchBox extends Component {
           role="search"
           className="pos-relative d-flex ai-center jc-center mb-0 d-grid g-6"
         >
-          <div className="bgc-white gcstart-1 gcend-2 d-grid g-3 ta-center h-100 bdrw-1 bdbw-2 bdrs-solid bdbs-solid">
+          <div className="bgc-white gcstart-1 gcend-2 d-grid g-3 ta-center h-50 md:h-100 bdrw-1 bdbw-2 bdrs-solid bdbs-solid">
             <button className="app-none bdw-0 bdc-black d-flex ai-center jc-center bdrw-2 bdrs-solid bgc-white color-black hover:bgc-black hover:color-white cursor-pointer">
               <Icon.Info
                 onClick={e => {
@@ -253,7 +253,7 @@ class CustomSearchBox extends Component {
             type="search"
             value={currentRefinement}
             onChange={event => refine(event.currentTarget.value)}
-            className="app-none w-100p h-100 bdw-0 bdbw-2 bdbs-solid bdc-black ph-16 gcstart-2 gcend-6 bdlw-1 bdls-solid ff-mono"
+            className="app-none w-100p h-50 md:h-100 bdw-0 bdbw-2 bdbs-solid bdc-black ph-16 gcstart-2 gcend-6 bdlw-1 bdls-solid ff-mono"
             placeholder="Search my bookmarks! "
             css={css`
               font-size: 40px;
@@ -261,7 +261,7 @@ class CustomSearchBox extends Component {
             `}
           />
 
-          <div className="gcstart-6 gcend-7 ta-center bgc-white d-flex ai-center jc-center bdbw-2 bdbs-solid bdc-black h-100">
+          <div className="gcstart-6 gcend-7 ta-center bgc-white d-flex ai-center jc-center bdbw-2 bdbs-solid bdc-black h-50 md:h-100">
             <Icon.Search width={56} height={56} strokeWidth={2.3} />
           </div>
         </form>
