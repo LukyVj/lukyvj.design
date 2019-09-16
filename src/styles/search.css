@@ -1,0 +1,8 @@
+.ais-InstantSearch__root {
+  height: 100%;
+}
+
+::placeholder {
+  color: black;
+  opacity: 0.5;
+}
