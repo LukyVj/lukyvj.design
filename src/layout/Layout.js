@@ -40,6 +40,7 @@ const Layout = ({ children }) => {
           css={css`
             background: white
               url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAHklEQVQYV2NkYGAwZmBgOMsAAcaMMAaUPotVAEULAIpFBGuHZPV9AAAAAElFTkSuQmCC);
+            background-attachment: fixed;
             height: calc(100vh - 50px);
 
             @media (min-width: 960px) {

@@ -4,6 +4,7 @@ import algoliasearch from "algoliasearch/lite"
 import {
   InstantSearch,
   connectSearchBox,
+  connectStateResults,
   connectRefinementList,
   connectHits,
   connectHighlight,
@@ -12,8 +13,40 @@ import { css, jsx } from "@emotion/core"
 import * as Icon from "react-feather"
 import { isBrowser } from "../scripts/helpers"
 
+import { SidebarPanel } from "./SidebarPanel"
+
 import "../styles/search.css"
-import { set } from "idb-keyval"
+
+class StateResults extends Component {
+  constructor(props) {
+    super(props)
+  }
+
+  componentDidMount() {
+    this.props.parent.setState({
+      currentNbHits:
+        this.props.searchResults && this.props.searchResults.nbHits,
+    })
+  }
+
+  componentDidUpdate() {
+    this.props.parent.setState({
+      currentNbHits:
+        this.props.searchResults && this.props.searchResults.nbHits,
+    })
+  }
+  render() {
+    const hasResults =
+      this.props.searchResults && this.props.searchResults.nbHits !== 0
+    const nbHits = this.props.searchResults && this.props.searchResults.nbHits
+
+    console.log()
+
+    return null
+  }
+}
+
+const CustomStateResults = connectStateResults(StateResults)
 
 const searchClient = algoliasearch(
   process.env.ALG_APP_ID,
@@ -192,6 +225,7 @@ class CustomSearchBox extends Component {
       updated: false,
       favedPanelShown: false,
       informationPanelShown: false,
+      currentNbHits: null,
     }
   }
 
@@ -224,6 +258,7 @@ class CustomSearchBox extends Component {
           role="search"
           className="pos-relative d-flex ai-center jc-center mb-0 d-grid g-6"
         >
+          <CustomStateResults parent={this} />
           <div className="bgc-white gcstart-1 gcend-2 d-grid g-3 ta-center h-50 md:h-100 bdrw-1 bdbw-2 bdrs-solid bdbs-solid">
             <button className="app-none bdw-0 bdc-black d-flex ai-center jc-center bdrw-2 bdrs-solid bgc-white color-black hover:bgc-black hover:color-white cursor-pointer">
               <Icon.Info
@@ -254,184 +289,18 @@ class CustomSearchBox extends Component {
             value={currentRefinement}
             onChange={event => refine(event.currentTarget.value)}
             className="app-none w-100p h-50 md:h-100 bdw-0 bdbw-2 bdbs-solid bdc-black ph-16 gcstart-2 gcend-6 bdlw-1 bdls-solid ff-mono"
-            placeholder="Search my bookmarks! "
+            placeholder={`Search in my ${this.state.currentNbHits} bookmarks!`}
             css={css`
               font-size: 40px;
               outline: none;
             `}
           />
 
-          <div className="gcstart-6 gcend-7 ta-center bgc-white d-flex ai-center jc-center bdbw-2 bdbs-solid bdc-black h-50 md:h-100">
+          <div className="gcstart-6 gcend-7 ta-center bgc-white d-flex ai-center jc-center bdbw-2 bdbs-solid bdlw-2 bdls-solid bdc-black h-50 md:h-100">
             <Icon.Search width={56} height={56} strokeWidth={2.3} />
           </div>
         </form>
-        <div
-          className="pos-fixed w-100p h-100p z-max d-grid g-6 tesssst us-none pe-none"
-          css={css`
-            z-index: 9999999;
-            top: 0;
-            left: 0;
-          `}
-        >
-          <div
-            className={`bgc-white color-black pos-absolute w-100p ${
-              this.state.informationPanelShown
-                ? "d-block v-visible"
-                : "d-none v-hidden"
-            }`}
-            css={css`
-              z-index: 9999999999;
-            `}
-          >
-            <p>My smart bookmark system</p>
-            )}
-          </div>
-          <div
-            className={`bgc-white color-black pos-absolute w-100p top-200 gcstart-0 md:gcend-2 ${
-              this.state.favedPanelShown
-                ? "d-block v-visible"
-                : "d-none v-hidden"
-            }`}
-            css={css`
-              z-index: 9999999999;
-              height: calc(100% - 300px);
-            `}
-          >
-            {isBrowser && window.localStorage.getItem("favorites") ? (
-              <div>
-                <h5 className="ta-left d-block w-100p p-16 ta-center bdbw-2 bdbs-solid bdc-blackx ov-hidden ws-nowrap to-ellipsis color-current fw-extrabold tt-upper fsz-14 mb-0">
-                  <span>
-                    {`You saved ${
-                      JSON.parse(window.localStorage.getItem("favorites"))
-                        .length
-                    } link${
-                      JSON.parse(window.localStorage.getItem("favorites"))
-                        .length <= 1
-                        ? ""
-                        : "s"
-                    }`}
-                  </span>
-
-                  <Icon.Trash
-                    className="va-middle cursor-pointer ml-8 pos-relative"
-                    css={css`
-                      top: -1px;
-                      &:hover {
-                        stroke: red;
-                      }
-                    `}
-                    width={16}
-                    strokeWidth={3}
-                    stroke={
-                      this.state.deleteFavMessage !== null ? "red" : "black"
-                    }
-                    onClick={() =>
-                      this.setState({
-                        deleteFavMessage:
-                          "Are you sure you want to delete all your favorite? You wont be able to recover them after that",
-                      })
-                    }
-                  />
-                </h5>
-
-                <span>
-                  {this.state.deleteFavMessage && (
-                    <div className="bdbw-2 bdbs-solid bdc-black">
-                      <p
-                        className="p-8 fw-bold m-0"
-                        css={css`
-                          color: red;
-                        `}
-                      >
-                        {this.state.deleteFavMessage}
-                      </p>
-                      <div className="d-grid g-2 bdtw-2 bdts-solid bdc-black h-50 ta-center">
-                        <span
-                          onClick={() => {
-                            isBrowser && window.localStorage.clear()
-                            this.forceUpdate()
-                          }}
-                          className="bdrw-2 bdrs-solid bdc-black d-flex ai-center jc-center fw-bold tt-upper cursor-pointer"
-                          css={css`
-                            &:hover {
-                              color: red;
-                            }
-                          `}
-                        >
-                          DELETE
-                        </span>
-
-                        <span
-                          onClick={() => {
-                            this.setState({
-                              deleteFavMessage: null,
-                            })
-                            this.forceUpdate()
-                          }}
-                          className="d-flex ai-center jc-center fw-bold tt-upper cursor-pointer"
-                        >
-                          CANCEL
-                        </span>
-                      </div>
-                    </div>
-                  )}
-                </span>
-                <div
-                  css={css`
-                    counter-reset: fav-counter;
-                  `}
-                >
-                  {JSON.parse(window.localStorage.getItem("favorites"))
-                    .reverse()
-                    .map(faved => (
-                      <div
-                        className="pv-4 h-auto bdbw-2 bdbs-solid pos-relative bdc-black color-black bgc-white"
-                        css={css`
-                          counter-increment: fav-counter;
-                        `}
-                      >
-                        <a
-                          href={faved.link}
-                          title={faved.link}
-                          className="td-none w-100p color-current td-none d-inline-block va-bottom p-4"
-                        >
-                          <span
-                            className="w-100p d-inline-block tt-upper lh-big fsz-12 fw-bold"
-                            css={css`
-                              ::before {
-                                content: counter(fav-counter) ". ";
-                              }
-                            `}
-                          >
-                            {faved.title}
-                          </span>
-                          <small
-                            className="w-100p d-inline-block ff-mono "
-                            css={css`
-                              white-space: nowrap;
-                              overflow: hidden;
-                              text-overflow: ellipsis;
-                            `}
-                          >
-                            {faved.link}
-                          </small>
-                        </a>
-                      </div>
-                    ))}
-                </div>
-              </div>
-            ) : (
-              <div className="p-16 ta-center h-100p d-flex ai-center jc-center">
-                <div>
-                  <h3>Oopsie 😢</h3>
-                  <p className="op-50p">
-                    Seems like you haven't saved anything yet in your favorite
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+        <SidebarPanel parent={this} />
       </div>
     )
   }
@@ -479,12 +348,12 @@ class CustomHit extends Component {
           : false
         : false
 
-    this.setState({ starBg: isIt ? "white" : "black" })
+    this.setState({ starBg: isIt ? "#f4f400" : "black" })
   }
 
   handleHitClick = (arr, hit) => {
     this.addToFavorite(arr, hit)
-    this.setState({ starBg: "white" })
+    this.setState({ starBg: "#f4f400" })
   }
 
   componentDidMount() {
@@ -497,11 +366,18 @@ class CustomHit extends Component {
     return (
       <div
         key={this.props.hit.objectID}
-        className="pos-relative"
+        className="pos-relative hit"
         css={css`
           background: white
             url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAHklEQVQYV2NkYGAwZmBgOMsAAcaMMAaUPotVAEULAIpFBGuHZPV9AAAAAElFTkSuQmCC)
             repeat;
+
+          transition: transform 0.2s ease;
+          will-change: transform;
+
+          &:hover {
+            transform: scale(1);
+          }
           &:before {
             content: "";
             display: block;
@@ -603,7 +479,7 @@ class CustomHit extends Component {
           )}
 
           <footer
-            className="pos-relative bdc-black color-black w-100p va-middle td-none fsz-12 fw-extrabold ff-mono fx-4 js-end bgc-white"
+            className="pos-relative bdc-black bdbw-4 color-black w-100p va-middle td-none fsz-12 fw-extrabold ff-mono fx-4 js-end bgc-white"
             css={css`
               flex: 0;
             `}
@@ -611,7 +487,7 @@ class CustomHit extends Component {
             <a
               href={this.props.hit.link}
               title={`Link to: ${this.props.hit.title}`}
-              rel="noopener"
+              rel="noopener noreferrer"
               target="_blank"
               className="h-50 w-100p bdbw-2 bdbs-solid pos-relative bdc-black color-black hover:bgc-black hover:color-white d-inline-block w-100p d-flex ai-center jc-center  va-middle td-none tt-upper fw-extrabold fsz-16"
               css={css`
