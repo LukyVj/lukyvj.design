@@ -13,7 +13,7 @@ import { css, jsx } from "@emotion/core"
 import * as Icon from "react-feather"
 import { isBrowser } from "../scripts/helpers"
 
-import { SidebarPanel } from "./SidebarPanel"
+import SidebarPanel from "./SidebarPanel"
 
 import "../styles/search.css"
 

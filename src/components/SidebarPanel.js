@@ -19,7 +19,7 @@ class SidebarPanel extends Component {
           left: 0;
         `}
       >
-        {/* <div
+        <div
           className={`bgc-white color-black pos-absolute w-100p ${
             this.props.parent.state.informationPanelShown
               ? "d-block v-visible"
@@ -235,7 +235,7 @@ class SidebarPanel extends Component {
               </div>
             </div>
           )}
-        </div> */}
+        </div>
       </div>
     )
   }
